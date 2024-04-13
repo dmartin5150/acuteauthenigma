@@ -19,5 +19,7 @@ def given_tao():
     return counts, unique
 
 
-given_tao()
+counts, unique = given_tao()
+
+print(unique['orders'])
 

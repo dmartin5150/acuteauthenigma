@@ -11,7 +11,9 @@ def get_total_unique_counts(taoOrders, columnName):
     return counts, orderUnique
 
 def get_tao_data(taoOrders, columnName, selection):
-    orders = taoOrders[taoOrders[columnName].isin(selection)]
+    orders = taoOrders
+    if len(selection) != 0:
+        orders = taoOrders[taoOrders[columnName].isin(selection)]
     return orders
 
 

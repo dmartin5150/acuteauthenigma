@@ -15,6 +15,15 @@ taoOrders = pd.read_csv('AuthConnectOrders.csv', usecols=['departmentId', 'deptN
 taoOrders.fillna(value={'orderGenus':'None'},inplace=True)
 
 
+def process_tao_filters(items):
+    selected_orders = taoOrders
+    for item in items['items']:
+        if not item['isDisabled']:
+            selected_orders = get_tao_data(selected_orders,item['name'],item['results'])
+    return selected_orders
+
+
+
 def given_tao():
     selected_tao_orders = get_tao_data(taoOrders,'usedTAO',[255])
     departments_count, departments_unique = get_total_unique_counts(selected_tao_orders,'departmentId')
@@ -38,9 +47,10 @@ def get_data(request, string):
 
 @app.route('/alloptions', methods=['POST'])
 def get_all_options_async():
-    # date_requested = get_data(request.json, "date")
-    print(request.json)
-    return json.dumps({'id':1, 'value':'Got It'}), 200
+    items = request.json
+    new_items = process_tao_filters(items)
+    print(new_items)
+    return json.dumps([{'id':1, 'value':'Got It'},{'id':2, 'value':'Got It Again'}]), 200
 
 
 

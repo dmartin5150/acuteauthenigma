@@ -1,14 +1,22 @@
 import pandas as pd
+from flask import Flask, flash, request, redirect, render_template, send_from_directory,abort
+from flask_cors import CORS
+import json
 
 from utilities import get_tao_order_counts, get_total_unique_counts, get_tao_data
 
+app = Flask(__name__)
+CORS(app)
+app.secret_key = "seamless care" # for encrypting the session
+app.config['CORS_HEADERS'] = 'Content-Type'
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 taoOrders = pd.read_csv('AuthConnectOrders.csv', usecols=['departmentId', 'deptName','clinicalOrderTypeId','orderName','orderingProvider','orderGenus','taoBucket','usedTAO'])
 taoOrders.fillna(value={'orderGenus':'None'},inplace=True)
 
 
 def given_tao():
-    selected_tao_orders = get_tao_data(taoOrders,'usedTAO',[13624])
+    selected_tao_orders = get_tao_data(taoOrders,'usedTAO',[255])
     departments_count, departments_unique = get_total_unique_counts(selected_tao_orders,'departmentId')
     genus_count, genus_unique = get_total_unique_counts(selected_tao_orders, 'orderGenus')
     order_count, order_unique = get_total_unique_counts(selected_tao_orders, 'orderName')
@@ -21,5 +29,19 @@ def given_tao():
 
 counts, unique = given_tao()
 
-print(unique['orders'])
+print(counts['bucket'])
 
+def get_data(request, string):
+    data_requested = request[string]
+    return data_requested
+
+
+@app.route('/alloptions', methods=['POST'])
+def get_all_options_async():
+    # date_requested = get_data(request.json, "date")
+    print(request.json)
+    return json.dumps({'id':1, 'value':'Got It'}), 200
+
+
+
+app.run(host='0.0.0.0', port=5001)

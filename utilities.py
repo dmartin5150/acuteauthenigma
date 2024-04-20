@@ -4,6 +4,7 @@ def get_tao_order_counts(taoOrders):
 def get_total_unique_counts(taoOrders, columnName):
     orderCount = taoOrders.value_counts(columnName)
     counts = list(orderCount.items())
+    # counts = [[val, idx] for idx, val in orderCount.items()]
     # print(counts)
     orderUnique = orderCount.nunique()
     # print('unique', orderUnique)

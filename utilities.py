@@ -11,12 +11,12 @@ def clean_up_tao_orders(taoOrders):
 
 def get_total_unique_counts(taoOrders, columnName):
     orderCount = taoOrders.value_counts(columnName)
-    counts = list(orderCount.items())
-    # counts = [[val, idx] for idx, val in orderCount.items()]
-    # print(counts)
-    orderUnique = orderCount.nunique()
+    # counts = list(orderCount.items())
+    counts = [{'name': idx, 'count': val} for idx, val in orderCount.items()]
+    print(counts)
+    # orderUnique = orderCount.nunique()
     # print('unique', orderUnique)
-    return counts, orderUnique
+    return counts
 
 def get_tao_data(taoOrders, columnName, selection):
     orders = taoOrders

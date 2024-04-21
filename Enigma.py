@@ -26,21 +26,21 @@ def process_tao_filters(items):
 
 
 
-def given_tao():
-    selected_tao_orders = get_tao_data(taoOrders,'usedTAO',[255])
-    departments_count, departments_unique = get_total_unique_counts(selected_tao_orders,'departmentId')
-    genus_count, genus_unique = get_total_unique_counts(selected_tao_orders, 'orderGenus')
-    order_count, order_unique = get_total_unique_counts(selected_tao_orders, 'orderName')
-    bucket_count,bucket_unique = get_total_unique_counts(selected_tao_orders, 'taoBucket')
-    provider_count, provider_unique = get_total_unique_counts(selected_tao_orders, 'orderingProvider')
-    counts = {'departments': departments_count, 'genus':genus_count, 'orders':order_count,'bucket':bucket_count,'provider':provider_count}
-    unique = {'departments': departments_unique, 'genus':genus_unique, 'orders':order_unique,'bucket':bucket_unique,'provider':provider_unique}
-    return counts, unique
+# def given_tao():
+#     selected_tao_orders = get_tao_data(taoOrders,'usedTAO',[255])
+    # departments_count, departments_unique = get_total_unique_counts(selected_tao_orders,'departmentId')
+    # genus_count, genus_unique = get_total_unique_counts(selected_tao_orders, 'orderGenus')
+    # order_count, order_unique = get_total_unique_counts(selected_tao_orders, 'orderName')
+    # bucket_count,bucket_unique = get_total_unique_counts(selected_tao_orders, 'taoBucket')
+    # provider_count, provider_unique = get_total_unique_counts(selected_tao_orders, 'orderingProvider')
+    # counts = {'departments': departments_count, 'genus':genus_count, 'orders':order_count,'bucket':bucket_count,'provider':provider_count}
+    # unique = {'departments': departments_unique, 'genus':genus_unique, 'orders':order_unique,'bucket':bucket_unique,'provider':provider_unique}
+    # return counts, unique
 
 
-counts, unique = given_tao()
+# counts, unique = given_tao()
 
-print(counts['bucket'])
+# print(counts['bucket'])
 
 def get_data(request, string):
     data_requested = request[string]
@@ -50,11 +50,8 @@ def get_data(request, string):
 @app.route('/alloptions', methods=['POST'])
 def get_all_options_async():
     items = request.json
-    # print(items)
     new_items = process_tao_filters(items)
-    print('----NEW VALUES----')
-    print('new items', items['items'][3])
-    return json.dumps(items), 200
+    return json.dumps(new_items), 200
 
 
 

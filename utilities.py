@@ -1,6 +1,14 @@
 def get_tao_order_counts(taoOrders):
     return taoOrders.value_counts('usedTAO')
 
+
+def remove_comments(orderName):
+     return orderName.split('-')[0]
+
+def clean_up_tao_orders(taoOrders):
+        taoOrders['orderName'] = taoOrders['orderName'].apply(lambda x: remove_comments(x))
+        return taoOrders
+
 def get_total_unique_counts(taoOrders, columnName):
     orderCount = taoOrders.value_counts(columnName)
     counts = list(orderCount.items())

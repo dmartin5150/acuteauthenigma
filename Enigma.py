@@ -3,7 +3,7 @@ from flask import Flask, flash, request, redirect, render_template, send_from_di
 from flask_cors import CORS
 import json
 
-from utilities import get_tao_order_counts, get_total_unique_counts, get_tao_data
+from utilities import get_tao_order_counts, get_total_unique_counts, get_tao_data,clean_up_tao_orders
 
 app = Flask(__name__)
 CORS(app)
@@ -13,14 +13,16 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 taoOrders = pd.read_csv('AuthConnectOrders.csv', usecols=['departmentId', 'deptName','clinicalOrderTypeId','orderName','orderingProvider','orderGenus','taoBucket','usedTAO'])
 taoOrders.fillna(value={'orderGenus':'None'},inplace=True)
+taoOrders = clean_up_tao_orders(taoOrders)
 
 
 def process_tao_filters(items):
     selected_orders = taoOrders
     for item in items['items']:
         if not item['isDisabled']:
-            selected_orders = get_tao_data(selected_orders,item['name'],item['results'])
-    return selected_orders
+            selected_orders = get_tao_data(selected_orders,item['alias'],item['results'])
+        item['selectedValues'] = get_total_unique_counts(selected_orders, item['alias'])
+    return items
 
 
 
@@ -48,9 +50,11 @@ def get_data(request, string):
 @app.route('/alloptions', methods=['POST'])
 def get_all_options_async():
     items = request.json
+    # print(items)
     new_items = process_tao_filters(items)
-    print(new_items)
-    return json.dumps([{'id':1, 'value':'Got It'},{'id':2, 'value':'Got It Again'}]), 200
+    print('----NEW VALUES----')
+    print('new items', items['items'][3])
+    return json.dumps(items), 200
 
 
 

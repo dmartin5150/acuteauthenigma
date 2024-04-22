@@ -13,34 +13,27 @@ app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 taoOrders = pd.read_csv('AuthConnectOrders.csv', usecols=['departmentId', 'deptName','clinicalOrderTypeId','orderName','orderingProvider','orderGenus','taoBucket','usedTAO'])
 taoOrders.fillna(value={'orderGenus':'None'},inplace=True)
+taoOrders['usedTAO'] = taoOrders['usedTAO'].astype(str)
 taoOrders = clean_up_tao_orders(taoOrders)
+
 
 
 def process_tao_filters(items):
     selected_orders = taoOrders
+    first_pass = True
     for item in items['items']:
         if not item['isDisabled']:
-            selected_orders = get_tao_data(selected_orders,item['alias'],item['results'])
-        item['selectedValues'] = get_total_unique_counts(selected_orders, item['alias'])
+            selected_orders = get_tao_data(selected_orders,item['alias'],item['selectedValues'])
+        if (first_pass):
+            item['dropDownValues']= get_total_unique_counts(taoOrders, item['alias'])
+            item['results'] = get_total_unique_counts(taoOrders, item['alias'])
+        else:
+            item['dropDownValues']= get_total_unique_counts(selected_orders, item['alias']) 
+            item['results'] = get_total_unique_counts(selected_orders, item['alias'])
+        first_pass=False
     return items
 
 
-
-# def given_tao():
-#     selected_tao_orders = get_tao_data(taoOrders,'usedTAO',[255])
-    # departments_count, departments_unique = get_total_unique_counts(selected_tao_orders,'departmentId')
-    # genus_count, genus_unique = get_total_unique_counts(selected_tao_orders, 'orderGenus')
-    # order_count, order_unique = get_total_unique_counts(selected_tao_orders, 'orderName')
-    # bucket_count,bucket_unique = get_total_unique_counts(selected_tao_orders, 'taoBucket')
-    # provider_count, provider_unique = get_total_unique_counts(selected_tao_orders, 'orderingProvider')
-    # counts = {'departments': departments_count, 'genus':genus_count, 'orders':order_count,'bucket':bucket_count,'provider':provider_count}
-    # unique = {'departments': departments_unique, 'genus':genus_unique, 'orders':order_unique,'bucket':bucket_unique,'provider':provider_unique}
-    # return counts, unique
-
-
-# counts, unique = given_tao()
-
-# print(counts['bucket'])
 
 def get_data(request, string):
     data_requested = request[string]
